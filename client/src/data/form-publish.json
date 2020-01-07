@@ -17,6 +17,13 @@
           "type": "text",
           "required": true,
           "help": "Provide one or multiple urls to your data set files."
+        },
+        "stages": {
+          "label": "Stages",
+          "placeholder": "e.g. Filter",
+          "type": "text",
+          "required": true,
+          "help": "Provide one or more stages to your workflow."
         }
       }
     },

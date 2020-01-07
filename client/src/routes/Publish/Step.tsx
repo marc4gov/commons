@@ -5,6 +5,7 @@ import Row from '../../components/atoms/Form/Row'
 import Button from '../../components/atoms/Button'
 import { User, Market } from '../../context'
 import Files from './Files/'
+import Stages from './Stages'
 import StepRegisterContent from './StepRegisterContent'
 import styles from './Step.module.scss'
 import Web3message from '../../components/organisms/Web3message'
@@ -106,6 +107,7 @@ export default class Step extends PureComponent<StepProps, {}> {
 
                 {fields &&
                     Object.entries(fields).map(([key, value]) => {
+                        console.log(key)
                         if (key === 'files') {
                             return (
                                 <Row key={key}>
@@ -117,6 +119,22 @@ export default class Step extends PureComponent<StepProps, {}> {
                                         name={key}
                                         help={value.help}
                                         files={state.files}
+                                        onChange={inputChange}
+                                    />
+                                </Row>
+                            )
+                        }
+                        if (key === 'stages') {
+                            return (
+                                <Row key={key}>
+                                    <Label htmlFor={key} required>
+                                        {value.label}
+                                    </Label>
+                                    <Stages
+                                        placeholder={value.placeholder}
+                                        name={key}
+                                        help={value.help}
+                                        stages={state.stages}
                                         onChange={inputChange}
                                     />
                                 </Row>

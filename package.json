@@ -22,7 +22,9 @@
     "cypress:run": "cypress run --browser chrome",
     "cypress:open": "cypress open"
   },
-  "dependencies": {},
+  "dependencies": {
+    "node-sass": "^4.13.0"
+  },
   "devDependencies": {
     "@release-it/bumper": "^1.0.5",
     "@typescript-eslint/eslint-plugin": "^1.6.0",

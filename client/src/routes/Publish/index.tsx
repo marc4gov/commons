@@ -1,9 +1,11 @@
 import React, { ChangeEvent, Component, FormEvent } from 'react'
-import { Logger, File } from '@oceanprotocol/squid'
+import { Logger, File, Workflow, Stage } from '@oceanprotocol/squid'
 import Web3 from 'web3'
 import Route from '../../components/templates/Route'
 import Form from '../../components/atoms/Form/Form'
 import AssetModel from '../../models/AssetModel'
+import AssetModelWorkflow from '../../models/AssetModelWorkflow'
+
 import { User, Market } from '../../context'
 import Step from './Step'
 import Progress from './Progress'
@@ -26,6 +28,7 @@ interface PublishState {
     type?: AssetType
     copyrightHolder?: string
     categories?: string
+    stages?: Stage[]
 
     currentStep?: number
     publishingStep?: number
@@ -54,13 +57,13 @@ class Publish extends Component<{}, PublishState> {
         dateCreated: new Date().toISOString(),
         description: '',
         files: [],
+        stages:[],
         price: '0',
         author: '',
-        type: 'dataset' as AssetType,
+        type: 'workflow' as AssetType,
         license: '',
         copyrightHolder: '',
         categories: '',
-
         currentStep: 1,
         isPublishing: false,
         isPublished: false,
@@ -68,7 +71,7 @@ class Publish extends Component<{}, PublishState> {
         publishingError: '',
         publishingStep: 0,
         validationStatus: {
-            1: { name: false, files: false, allFieldsValid: false },
+            1: { name: false, files: false, stages: false, allFieldsValid: false },
             2: {
                 description: false,
                 categories: false,
@@ -124,9 +127,10 @@ class Publish extends Component<{}, PublishState> {
             dateCreated: new Date().toISOString(),
             description: '',
             files: [],
+            stages:[],
             price: '0',
             author: '',
-            type: 'dataset' as AssetType,
+            type: 'workflow' as AssetType,
             license: '',
             copyrightHolder: '',
             categories: '',
@@ -179,7 +183,7 @@ class Publish extends Component<{}, PublishState> {
         //
         // Step 1
         //
-        if (validationStatus[1].name && validationStatus[1].files) {
+        if (validationStatus[1].name && validationStatus[1].files && validationStatus[1].stages) {
             this.setState(prevState => ({
                 validationStatus: {
                     ...prevState.validationStatus,

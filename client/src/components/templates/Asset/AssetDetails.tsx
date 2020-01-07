@@ -33,7 +33,7 @@ const MetaFixedItem = ({ name, value }: { name: string; value: string }) => (
 export default function AssetDetails({ metadata, ddo }: AssetDetailsProps) {
     const { main, additionalInformation } = metadata
     const price = main.price && Web3.utils.fromWei(main.price.toString())
-
+    console.log(main)
     const metaFixed = [
         {
             name: 'Author',
