@@ -6,6 +6,9 @@ import Button from '../../components/atoms/Button'
 import { User, Market } from '../../context'
 import Files from './Files/'
 import Stages from './Stages'
+import Algorithm from './Algorithm'
+import Service from './Service'
+
 import StepRegisterContent from './StepRegisterContent'
 import styles from './Step.module.scss'
 import Web3message from '../../components/organisms/Web3message'
@@ -108,7 +111,6 @@ export default class Step extends PureComponent<StepProps, {}> {
 
                 {fields &&
                     Object.entries(fields).map(([key, value]) => {
-                        console.log(fields)
                         if (key === 'selection') {
                             switch(state.assettype) {
                                 case "Dataset":
@@ -159,7 +161,25 @@ export default class Step extends PureComponent<StepProps, {}> {
                                                 placeholder={algofields.placeholder}
                                                 name={key3}
                                                 help={algofields.help}
-                                                algorithm={state.algorithm}
+                                                algo={state.algorithm}
+                                                onChange={inputChange}
+                                            />
+                                        </Row>
+                                    )
+                                    break;
+                                case "Service":
+                                    const key4 = "service"
+                                    const servicefields = value[key4]
+                                    return (
+                                        <Row key={key4}>
+                                            <Label htmlFor={key4} required>
+                                                {servicefields.label}
+                                            </Label>
+                                            <Service
+                                                placeholder={servicefields.placeholder}
+                                                name={key4}
+                                                help={servicefields.help}
+                                                service={state.service}
                                                 onChange={inputChange}
                                             />
                                         </Row>

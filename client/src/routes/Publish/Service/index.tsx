@@ -3,15 +3,12 @@ import React, {
     PureComponent,
     ChangeEvent
 } from 'react'
-import shortid from 'shortid'
-import Button from '../../../components/atoms/Button'
 import Help from '../../../components/atoms/Form/Help'
 import ItemForm from './ItemForm'
-import Item from './Item'
 import styles from './index.module.scss'
 
-interface AlgorithmProps {
-    algo: string
+interface ServiceProps {
+    service: string
     placeholder: string
     help?: string
     name: string
@@ -33,14 +30,14 @@ const buttons = [
     }
 ]
 
-export default class Algorithm extends PureComponent<AlgorithmProps> {
+export default class Service extends PureComponent<ServiceProps> {
 
-    private addAlgo = async (algo: string) => {
+    private addService = async (service: string) => {
 
         const event = {
             currentTarget: {
                 name: 'algorithm',
-                value: this.props.algo
+                value: this.props.service
             }
         }
         this.props.onChange(event as any)
@@ -51,7 +48,7 @@ export default class Algorithm extends PureComponent<AlgorithmProps> {
 
 
     public render() {
-        const { algo, help, placeholder, name, onChange } = this.props
+        const { service, help, placeholder, name, onChange } = this.props
 
         return (
             <>
@@ -61,16 +58,16 @@ export default class Algorithm extends PureComponent<AlgorithmProps> {
                 <input
                     type="hidden"
                     name={name}
-                    value={JSON.stringify(algo)}
+                    value={JSON.stringify(service)}
                     onChange={onChange}
-                    data-testid="algo"
+                    data-testid="service"
                 />
 
                 <div className={styles.newItems}>
 
                         <ItemForm
                             placeholder={placeholder}
-                            addAlgo={this.addAlgo}
+                            addService={this.addService}
                         />
 
                 </div>

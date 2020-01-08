@@ -4,7 +4,7 @@ import Button from '../../../components/atoms/Button'
 import styles from './ItemForm.module.scss'
 
 interface ItemFormProps {
-    addStage(stage: string): void
+    addAlgo(algo: string): void
     placeholder: string
 }
 
@@ -43,7 +43,7 @@ export default class ItemForm extends PureComponent<
             return
         }
         const algo = {language: language, format: format, version: version, entrypoint: entrypoint, requirements: requirements}
-        this.props.addStage(JSON.stringify(algo))
+        this.props.addAlgo(JSON.stringify(algo))
     }
 
     private onChangeLanguage = (e: React.FormEvent<HTMLInputElement>) => {
@@ -132,7 +132,7 @@ export default class ItemForm extends PureComponent<
                 />
 
                 <Button onClick={(e: Event) => this.handleSubmit(e)}>
-                    Add Stage
+                    Add Algorithm
                 </Button>
 
                 {hasError && (
