@@ -8,12 +8,13 @@ interface ItemFormProps {
     placeholder: string
 }
 
+
 interface ItemFormStates {
-    stageType: string
-    inputs: string
-    requirements: string
-    transformation: string
-    outputs: string
+    language: string;
+    format?: string;
+    version?: string;
+    entrypoint: string;
+    requirements: string;
     hasError: boolean
 }
 
@@ -22,47 +23,49 @@ export default class ItemForm extends PureComponent<
     ItemFormStates
 > {
     public state: ItemFormStates = {
-        stageType: '',
-        inputs: '',
+        language: '',
+        format: '',
+        version: '',
+        entrypoint: '',
         requirements: '',
-        transformation: '',
-        outputs: '',
         hasError: false,
     }
 
     private handleSubmit = (e: Event) => {
         e.preventDefault()
 
-        const { stageType, inputs, requirements, transformation, outputs } = this.state
+        const { language, format, version, entrypoint, requirements } = this.state
 
         // return when required fields are empty, and url value is no url
         // Can't use browser validation cause we are in a form within a form
-        if (!stageType || !inputs || !requirements || !transformation || !outputs) {
+        if (!language || !format || !version || !entrypoint || !requirements) {
             this.setState({ hasError: true })
             return
         }
-        const stage = {stageType: stageType, inputs: inputs, requirements: requirements, transformation: transformation, outputs: outputs}
-        this.props.addStage(JSON.stringify(stage))
+        const algo = {language: language, format: format, version: version, entrypoint: entrypoint, requirements: requirements}
+        this.props.addStage(JSON.stringify(algo))
     }
-    private onChangStageType = (e: React.FormEvent<HTMLInputElement>) => {
-        this.setState({ stageType: e.currentTarget.value })
+
+    private onChangeLanguage = (e: React.FormEvent<HTMLInputElement>) => {
+        this.setState({ language: e.currentTarget.value })
         this.clearErrors()
     }
 
-    private onChangeInputs = (e: React.FormEvent<HTMLInputElement>) => {
-        this.setState({ inputs: e.currentTarget.value })
+    private onChangFormat = (e: React.FormEvent<HTMLInputElement>) => {
+        this.setState({ format: e.currentTarget.value })
         this.clearErrors()
     }
 
-    private onChangeOutputs = (e: React.FormEvent<HTMLInputElement>) => {
-        this.setState({ outputs: e.currentTarget.value })
+    private onChangeVersion = (e: React.FormEvent<HTMLInputElement>) => {
+        this.setState({ version: e.currentTarget.value })
         this.clearErrors()
     }
 
-    private onChangeTransformation = (e: React.FormEvent<HTMLInputElement>) => {
-        this.setState({ transformation: e.currentTarget.value })
+    private onChangeEntrypoint = (e: React.FormEvent<HTMLInputElement>) => {
+        this.setState({ entrypoint: e.currentTarget.value })
         this.clearErrors()
     }
+
     private onChangeRequirements = (e: React.FormEvent<HTMLInputElement>) => {
         this.setState({ requirements: e.currentTarget.value })
         this.clearErrors()
@@ -73,19 +76,19 @@ export default class ItemForm extends PureComponent<
     }
 
     public render() {
-        const { stageType, inputs, requirements, transformation, outputs, hasError } = this.state
+        const {  language, format, version, entrypoint, requirements, hasError } = this.state
 
         return (
             <div className={styles.itemForm}>
                 <Input
-                    label="Stage Type"
-                    name="stageType"
+                    label="Language"
+                    name="language"
                     required
-                    type="stageType"
+                    type="language"
                     placeholder={this.props.placeholder}
-                    value={stageType}
-                    onChange={this.onChangStageType}
-                    help="Supported stagetypes are Filter, Process, Issue, Verify"
+                    value={language}
+                    onChange={this.onChangeLanguage}
+                    help="Supported languages are Java, Process, Issue, Verify"
                 />
                 <Input
                     label="Requirements"
@@ -98,34 +101,34 @@ export default class ItemForm extends PureComponent<
                     help="Supported requirements are Container images, comma separated"
                 />
                 <Input
-                    label="Inputs"
-                    name="inputs"
+                    label="Format"
+                    name="format"
                     required
-                    type="inputs"
+                    type="format"
                     placeholder={this.props.placeholder}
-                    value={inputs}
-                    onChange={this.onChangeInputs}
-                    help="Supported inputs are DIDs and numbers, comma separated"
+                    value={format}
+                    onChange={this.onChangFormat}
+                    help="Supported formats:"
                 />
                 <Input
-                    label="Transformation"
-                    name="transformation"
+                    label="Entrypoint"
+                    name="entrypoint"
                     required
-                    type="transformation"
+                    type="entrypoint"
                     placeholder={this.props.placeholder}
-                    value={transformation}
-                    onChange={this.onChangeTransformation}
-                    help="Supported transformation: DID of transformation service"
+                    value={entrypoint}
+                    onChange={this.onChangeEntrypoint}
+                    help="Supported entrypoints:  service"
                 />               
                 <Input
-                    label="Outputs"
-                    name="outputs"
+                    label="Version"
+                    name="version"
                     required
-                    type="outputs"
+                    type="version"
                     placeholder={this.props.placeholder}
-                    value={outputs}
-                    onChange={this.onChangeOutputs}
-                    help="Supported outputs in order: metadataUrl, secretStoreUrl, accessProxyUrl, metadata"
+                    value={version}
+                    onChange={this.onChangeVersion}
+                    help="Supported outputs in order: , secretStoreUrl, accessProxyUrl, metadata"
                 />
 
                 <Button onClick={(e: Event) => this.handleSubmit(e)}>

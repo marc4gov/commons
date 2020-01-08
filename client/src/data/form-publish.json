@@ -2,7 +2,7 @@
   "steps": [
     {
       "title": "Essentials",
-      "description": "Start by adding a title and URLs for your data set.",
+      "description": "Start by adding a title and type for your asset.",
       "fields": {
         "name": {
           "label": "Title",
@@ -11,19 +11,40 @@
           "required": true,
           "help": "Enter a concise title. You will be able to enter a more thorough description in the next step."
         },
-        "files": {
-          "label": "Files",
-          "placeholder": "e.g. https://file.com/file.json",
-          "type": "text",
+        "assettype": {
+          "label": "Asset Type",
+          "help": "Pick an asset type which best fits your need.",
+          "type": "select",
           "required": true,
-          "help": "Provide one or multiple urls to your data set files."
+          "options": [
+            "Dataset",
+            "Algorithm",
+            "Workflow",
+            "Service"
+          ]
         },
-        "stages": {
-          "label": "Stages",
-          "placeholder": "e.g. Filter",
-          "type": "text",
-          "required": true,
-          "help": "Provide one or more stages to your workflow."
+        "selection": {
+          "files": {
+            "label": "Files",
+            "placeholder": "e.g. https://file.com/file.json",
+            "type": "text",
+            "required": true,
+            "help": "Provide one or multiple urls to your data set files."
+          },
+          "stages": {
+            "label": "Stages",
+            "placeholder": "e.g. Filter",
+            "type": "text",
+            "required": true,
+            "help": "Provide one or more stages to your workflow."
+          },
+          "algorithm": {
+            "label": "Algorithm",
+            "placeholder": "e.g. Java",
+            "type": "text",
+            "required": true,
+            "help": "Provide details of your algorithm."
+          }
         }
       }
     },

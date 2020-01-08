@@ -1,6 +1,4 @@
 import React, {
-    lazy,
-    Suspense,
     FormEvent,
     PureComponent,
     ChangeEvent
@@ -12,10 +10,6 @@ import Help from '../../../components/atoms/Form/Help'
 import ItemForm from './ItemForm'
 import Item from './Item'
 import styles from './index.module.scss'
-
-import { serviceUri } from '../../../config'
-import cleanupContentType from '../../../utils/cleanupContentType'
-import Spinner from '../../../components/atoms/Spinner'
 
 interface StagesProps {
     stages: Stage[]

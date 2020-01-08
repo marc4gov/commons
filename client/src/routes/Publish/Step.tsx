@@ -98,6 +98,7 @@ export default class Step extends PureComponent<StepProps, {}> {
 
         const lastStep = currentStep === totalSteps
 
+
         return (
             <>
                 <header className={styles.header}>
@@ -107,39 +108,67 @@ export default class Step extends PureComponent<StepProps, {}> {
 
                 {fields &&
                     Object.entries(fields).map(([key, value]) => {
-                        console.log(key)
-                        if (key === 'files') {
-                            return (
-                                <Row key={key}>
-                                    <Label htmlFor={key} required>
-                                        {value.label}
-                                    </Label>
-                                    <Files
-                                        placeholder={value.placeholder}
-                                        name={key}
-                                        help={value.help}
-                                        files={state.files}
-                                        onChange={inputChange}
-                                    />
-                                </Row>
-                            )
+                        console.log(fields)
+                        if (key === 'selection') {
+                            switch(state.assettype) {
+                                case "Dataset":
+                                    const key1 = "files"
+                                    const filefields = value[key1]
+                                    return (
+                                        <Row key={key1}>
+                                            <Label htmlFor={key1} required>
+                                                {filefields.label}
+                                            </Label>
+                                            <Files
+                                                placeholder={filefields.placeholder}
+                                                name={key1}
+                                                help={filefields.help}
+                                                files={state.files}
+                                                onChange={inputChange}
+                                            />
+                                        </Row>
+                                    )
+                                    break;
+                                case "Workflow":
+                                    const key2 = "stages"
+                                    const stagefields = value[key2]
+                                    return (
+                                        <Row key={key2}>
+                                            <Label htmlFor={key2} required>
+                                                {stagefields.label}
+                                            </Label>
+                                            <Stages
+                                                placeholder={stagefields.placeholder}
+                                                name={key2}
+                                                help={stagefields.help}
+                                                stages={state.stages}
+                                                onChange={inputChange}
+                                            />
+                                        </Row>
+                                    )
+                                    break;
+                                case "Algorithm":
+                                    const key3 = "algorithm"
+                                    const algofields = value[key3]
+                                    return (
+                                        <Row key={key3}>
+                                            <Label htmlFor={key3} required>
+                                                {algofields.label}
+                                            </Label>
+                                            <Algorithm
+                                                placeholder={algofields.placeholder}
+                                                name={key3}
+                                                help={algofields.help}
+                                                algorithm={state.algorithm}
+                                                onChange={inputChange}
+                                            />
+                                        </Row>
+                                    )
+                                    break;
+                                default: return
+                            }
                         }
-                        if (key === 'stages') {
-                            return (
-                                <Row key={key}>
-                                    <Label htmlFor={key} required>
-                                        {value.label}
-                                    </Label>
-                                    <Stages
-                                        placeholder={value.placeholder}
-                                        name={key}
-                                        help={value.help}
-                                        stages={state.stages}
-                                        onChange={inputChange}
-                                    />
-                                </Row>
-                            )
-                        }
+
 
                         return (
                             <Input
