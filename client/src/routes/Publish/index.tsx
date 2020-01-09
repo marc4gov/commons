@@ -29,7 +29,8 @@ interface PublishState {
     copyrightHolder?: string
     categories?: string
     stages?: Stage[]
-
+    algo?: string
+    service?: string
     currentStep?: number
     publishingStep?: number
     isPublishing?: boolean
@@ -58,6 +59,8 @@ class Publish extends Component<{}, PublishState> {
         description: '',
         files: [],
         stages:[],
+        algo: '',
+        service: '',
         price: '0',
         author: '',
         type: 'workflow' as AssetType,
@@ -71,7 +74,7 @@ class Publish extends Component<{}, PublishState> {
         publishingError: '',
         publishingStep: 0,
         validationStatus: {
-            1: { name: false, files: false, stages: false, allFieldsValid: false },
+            1: { name: false, files: false, stages: false, algo: false, service: false, allFieldsValid: false },
             2: {
                 description: false,
                 categories: false,
@@ -84,6 +87,11 @@ class Publish extends Component<{}, PublishState> {
                 allFieldsValid: false
             }
         }
+    }
+
+    public addAlgorithm = async (algo: string) => {
+        console.log("Add algorithm in Publish")
+        this.setState({"algo": algo})
     }
 
     private inputChange = (
@@ -142,6 +150,7 @@ class Publish extends Component<{}, PublishState> {
     }
 
     private validateInputs = (name: string, value: string) => {
+        console.log(name)
         const hasContent = value.length > 0
 
         // Setting state for all fields
@@ -183,7 +192,7 @@ class Publish extends Component<{}, PublishState> {
         //
         // Step 1
         //
-        if (validationStatus[1].name && validationStatus[1].files && validationStatus[1].stages) {
+        if (validationStatus[1].name && (validationStatus[1].files || validationStatus[1].stages || validationStatus[1].algo) ) {
             this.setState(prevState => ({
                 validationStatus: {
                     ...prevState.validationStatus,
@@ -369,6 +378,7 @@ class Publish extends Component<{}, PublishState> {
                                         tryAgain={this.tryAgain}
                                         toStart={this.toStart}
                                         content={step.content}
+                                        addAlgorithm={this.addAlgorithm}
                                     />
                                 ))}
                             </Form>

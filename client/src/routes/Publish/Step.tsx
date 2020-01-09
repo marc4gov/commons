@@ -44,6 +44,7 @@ interface StepProps {
     toStart(): void
     publishedDid?: string
     content?: string
+    addAlgorithm(algo: string): void
 }
 
 export default class Step extends PureComponent<StepProps, {}> {
@@ -80,6 +81,11 @@ export default class Step extends PureComponent<StepProps, {}> {
         return null
     }
 
+    public addAlgorithm = async (algo: string) => {
+        console.log("Add algorithm")
+        this.props.addAlgorithm(algo)
+    }
+
     public render() {
         const {
             currentStep,
@@ -101,7 +107,7 @@ export default class Step extends PureComponent<StepProps, {}> {
 
         const lastStep = currentStep === totalSteps
 
-
+        console.log(state)
         return (
             <>
                 <header className={styles.header}>
@@ -161,7 +167,7 @@ export default class Step extends PureComponent<StepProps, {}> {
                                                 placeholder={algofields.placeholder}
                                                 name={key3}
                                                 help={algofields.help}
-                                                algo={state.algorithm}
+                                                addAlgorithm={this.addAlgorithm}
                                                 onChange={inputChange}
                                             />
                                         </Row>
