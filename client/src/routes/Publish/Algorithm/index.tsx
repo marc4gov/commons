@@ -10,6 +10,7 @@ import styles from './index.module.scss'
 interface AlgorithmProps {
     addAlgorithm(algo: string): void
     placeholder: string
+    placeholders: string[]
     help?: string
     name: string
     onChange(
@@ -24,14 +25,12 @@ interface AlgorithmProps {
 export default class Algorithm extends PureComponent<AlgorithmProps> {
 
     private addAlgo = async (algo: string) => {
-        console.log(algo)
         this.props.addAlgorithm(algo)
     }
 
 
-
     public render() {
-        const { help, placeholder } = this.props
+        const { help, placeholder, placeholders } = this.props
 
         return (
             <>
@@ -41,6 +40,7 @@ export default class Algorithm extends PureComponent<AlgorithmProps> {
 
                         <ItemForm
                             placeholder={placeholder}
+                            placeholders={placeholders}
                             addAlgo={this.addAlgo}
                         />
 

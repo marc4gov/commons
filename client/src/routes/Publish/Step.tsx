@@ -45,6 +45,7 @@ interface StepProps {
     publishedDid?: string
     content?: string
     addAlgorithm(algo: string): void
+    addService(service:string): void
 }
 
 export default class Step extends PureComponent<StepProps, {}> {
@@ -82,8 +83,10 @@ export default class Step extends PureComponent<StepProps, {}> {
     }
 
     public addAlgorithm = async (algo: string) => {
-        console.log("Add algorithm")
         this.props.addAlgorithm(algo)
+    }
+    public addService = async (service: string) => {
+        this.props.addService(service)
     }
 
     public render() {
@@ -118,8 +121,8 @@ export default class Step extends PureComponent<StepProps, {}> {
                 {fields &&
                     Object.entries(fields).map(([key, value]) => {
                         if (key === 'selection') {
-                            switch(state.assettype) {
-                                case "Dataset":
+                            switch(state.type) {
+                                case "dataset":
                                     const key1 = "files"
                                     const filefields = value[key1]
                                     return (
@@ -136,8 +139,7 @@ export default class Step extends PureComponent<StepProps, {}> {
                                             />
                                         </Row>
                                     )
-                                    break;
-                                case "Workflow":
+                                case "workflow":
                                     const key2 = "stages"
                                     const stagefields = value[key2]
                                     return (
@@ -147,6 +149,7 @@ export default class Step extends PureComponent<StepProps, {}> {
                                             </Label>
                                             <Stages
                                                 placeholder={stagefields.placeholder}
+                                                placeholders={['e.g tensorflow/tensorflow, kong, mysql', 'e.g. did:op:x02d, 123', 'e.g. did:op:x02d', 'e.g. reference to metadata output']}
                                                 name={key2}
                                                 help={stagefields.help}
                                                 stages={state.stages}
@@ -154,8 +157,7 @@ export default class Step extends PureComponent<StepProps, {}> {
                                             />
                                         </Row>
                                     )
-                                    break;
-                                case "Algorithm":
+                                case "algorithm":
                                     const key3 = "algorithm"
                                     const algofields = value[key3]
                                     return (
@@ -165,6 +167,7 @@ export default class Step extends PureComponent<StepProps, {}> {
                                             </Label>
                                             <Algorithm
                                                 placeholder={algofields.placeholder}
+                                                placeholders={['a', 'b', 'c', 'd']}
                                                 name={key3}
                                                 help={algofields.help}
                                                 addAlgorithm={this.addAlgorithm}
@@ -172,8 +175,7 @@ export default class Step extends PureComponent<StepProps, {}> {
                                             />
                                         </Row>
                                     )
-                                    break;
-                                case "Service":
+                                case "service":
                                     const key4 = "service"
                                     const servicefields = value[key4]
                                     return (
@@ -183,15 +185,16 @@ export default class Step extends PureComponent<StepProps, {}> {
                                             </Label>
                                             <Service
                                                 placeholder={servicefields.placeholder}
+                                                placeholders={['a', 'b', 'c', 'd']}
                                                 name={key4}
                                                 help={servicefields.help}
-                                                service={state.service}
+                                                addService={this.addService}
                                                 onChange={inputChange}
                                             />
                                         </Row>
                                     )
-                                    break;
-                                default: return
+                                default: 
+                                    
                             }
                         }
 

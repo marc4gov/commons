@@ -11,16 +11,16 @@
           "required": true,
           "help": "Enter a concise title. You will be able to enter a more thorough description in the next step."
         },
-        "assettype": {
+        "type": {
           "label": "Asset Type",
           "help": "Pick an asset type which best fits your need.",
           "type": "select",
           "required": true,
           "options": [
-            "Dataset",
-            "Algorithm",
-            "Workflow",
-            "Service"
+            "dataset",
+            "algorithm",
+            "workflow",
+            "service"
           ]
         },
         "selection": {

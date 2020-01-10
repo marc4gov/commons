@@ -6,6 +6,7 @@ import styles from './ItemForm.module.scss'
 interface ItemFormProps {
     addStage(stage: string): void
     placeholder: string
+    placeholders: string[]
 }
 
 interface ItemFormStates {
@@ -92,7 +93,7 @@ export default class ItemForm extends PureComponent<
                     name="requirements"
                     required
                     type="requirements"
-                    placeholder={this.props.placeholder}
+                    placeholder={this.props.placeholders[0]}
                     value={requirements}
                     onChange={this.onChangeRequirements}
                     help="Supported requirements are Container images, comma separated"
@@ -102,7 +103,7 @@ export default class ItemForm extends PureComponent<
                     name="inputs"
                     required
                     type="inputs"
-                    placeholder={this.props.placeholder}
+                    placeholder={this.props.placeholders[1]}
                     value={inputs}
                     onChange={this.onChangeInputs}
                     help="Supported inputs are DIDs and numbers, comma separated"
@@ -112,7 +113,7 @@ export default class ItemForm extends PureComponent<
                     name="transformation"
                     required
                     type="transformation"
-                    placeholder={this.props.placeholder}
+                    placeholder={this.props.placeholders[2]}
                     value={transformation}
                     onChange={this.onChangeTransformation}
                     help="Supported transformation: DID of transformation service"
@@ -122,7 +123,7 @@ export default class ItemForm extends PureComponent<
                     name="outputs"
                     required
                     type="outputs"
-                    placeholder={this.props.placeholder}
+                    placeholder={this.props.placeholders[3]}
                     value={outputs}
                     onChange={this.onChangeOutputs}
                     help="Supported outputs in order: metadataUrl, secretStoreUrl, accessProxyUrl, metadata"

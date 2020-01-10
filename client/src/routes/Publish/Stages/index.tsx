@@ -14,6 +14,7 @@ import styles from './index.module.scss'
 interface StagesProps {
     stages: Stage[]
     placeholder: string
+    placeholders: string[]
     help?: string
     name: string
     onChange(
@@ -80,7 +81,7 @@ export default class Stages extends PureComponent<StagesProps, StagesStates> {
     }
 
     public render() {
-        const { stages, help, placeholder, name, onChange } = this.props
+        const { stages, help, placeholder, placeholders, name, onChange } = this.props
         const { isFormShown } = this.state
 
         return (
@@ -128,6 +129,7 @@ export default class Stages extends PureComponent<StagesProps, StagesStates> {
                     {isFormShown && (
                         <ItemForm
                             placeholder={placeholder}
+                            placeholders={placeholders}
                             addStage={this.addStage}
                         />
                     )}

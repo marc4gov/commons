@@ -6,6 +6,7 @@ import styles from './ItemForm.module.scss'
 interface ItemFormProps {
     addService(service: string): void
     placeholder: string
+    placeholders: string[]
 }
 
 interface ItemFormStates {
@@ -89,7 +90,7 @@ export default class ItemForm extends PureComponent<
                     label="Spec Checksum"
                     name="specChecksum"
                     type="specChecksum"
-                    placeholder={this.props.placeholder}
+                    placeholder={this.props.placeholders[0]}
                     value={specChecksum}
                     onChange={this.onChangeSpecChecksum}
                     help="Enter Spec Checksum"
@@ -99,7 +100,7 @@ export default class ItemForm extends PureComponent<
                     name="auth"
                     required
                     type="auth"
-                    placeholder={this.props.placeholder}
+                    placeholder={this.props.placeholders[1]}
                     value={auth}
                     onChange={this.onChangeAuth}
                     help="Supported formats:"
@@ -109,7 +110,7 @@ export default class ItemForm extends PureComponent<
                     name="endpoints"
                     required
                     type="endpoints"
-                    placeholder={this.props.placeholder}
+                    placeholder={this.props.placeholders[2]}
                     value={endpoints}
                     onChange={this.onChangeEndpoints}
                     help="Supported formats:"

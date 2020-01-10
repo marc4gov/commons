@@ -6,6 +6,8 @@ import styles from './ItemForm.module.scss'
 interface ItemFormProps {
     addAlgo(algo: string): void
     placeholder: string
+    placeholders: string[]
+    
 }
 
 
@@ -95,7 +97,7 @@ export default class ItemForm extends PureComponent<
                     name="requirements"
                     required
                     type="requirements"
-                    placeholder={this.props.placeholder}
+                    placeholder={this.props.placeholders[0]}
                     value={requirements}
                     onChange={this.onChangeRequirements}
                     help="Supported requirements are Container images, comma separated"
@@ -105,7 +107,7 @@ export default class ItemForm extends PureComponent<
                     name="format"
                     required
                     type="format"
-                    placeholder={this.props.placeholder}
+                    placeholder={this.props.placeholders[1]}
                     value={format}
                     onChange={this.onChangFormat}
                     help="Supported formats:"
@@ -115,7 +117,7 @@ export default class ItemForm extends PureComponent<
                     name="entrypoint"
                     required
                     type="entrypoint"
-                    placeholder={this.props.placeholder}
+                    placeholder={this.props.placeholders[2]}
                     value={entrypoint}
                     onChange={this.onChangeEntrypoint}
                     help="Supported entrypoints:  service"
@@ -125,7 +127,7 @@ export default class ItemForm extends PureComponent<
                     name="version"
                     required
                     type="version"
-                    placeholder={this.props.placeholder}
+                    placeholder={this.props.placeholders[3]}
                     value={version}
                     onChange={this.onChangeVersion}
                     help="Supported outputs in order: , secretStoreUrl, accessProxyUrl, metadata"

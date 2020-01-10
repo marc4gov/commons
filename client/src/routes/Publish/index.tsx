@@ -1,10 +1,12 @@
 import React, { ChangeEvent, Component, FormEvent } from 'react'
-import { Logger, File, Workflow, Stage } from '@oceanprotocol/squid'
+import { Logger, File, Workflow, StageRequirements, StageInput, StageTransformation, StageOutput } from '@oceanprotocol/squid'
 import Web3 from 'web3'
 import Route from '../../components/templates/Route'
 import Form from '../../components/atoms/Form/Form'
 import AssetModel from '../../models/AssetModel'
 import AssetModelWorkflow from '../../models/AssetModelWorkflow'
+import AssetModelService from '../../models/AssetModelService'
+
 
 import { User, Market } from '../../context'
 import Step from './Step'
@@ -15,7 +17,17 @@ import { steps } from '../../data/form-publish.json'
 import Content from '../../components/atoms/Content'
 import withTracker from '../../hoc/withTracker'
 
-type AssetType = 'dataset' | 'algorithm' | 'container' | 'workflow' | 'other'
+type AssetType = 'dataset' | 'algorithm' | 'container' | 'workflow' | 'service' | 'other'
+
+// hack! StageInput is an array and we get all strings for now...
+interface Stage {
+    index: number;
+    stageType?: string;
+    requirements: string;
+    input: string[];
+    transformation: string;
+    output: string;
+}
 
 interface PublishState {
     name?: string
@@ -90,8 +102,17 @@ class Publish extends Component<{}, PublishState> {
     }
 
     public addAlgorithm = async (algo: string) => {
-        console.log("Add algorithm in Publish")
-        this.setState({"algo": algo})
+        let validationStatus = this.state.validationStatus
+        validationStatus[1].algo = true
+        this.setState({"algo": algo, "validationStatus" : validationStatus})
+        this.runValidation()
+    }
+
+    public addService = async (service: string) => {
+        let validationStatus = this.state.validationStatus
+        validationStatus[1].service = true
+        this.setState({"service": service, "validationStatus" : validationStatus})
+        this.runValidation()
     }
 
     private inputChange = (
@@ -150,7 +171,7 @@ class Publish extends Component<{}, PublishState> {
     }
 
     private validateInputs = (name: string, value: string) => {
-        console.log(name)
+
         const hasContent = value.length > 0
 
         // Setting state for all fields
@@ -192,7 +213,8 @@ class Publish extends Component<{}, PublishState> {
         //
         // Step 1
         //
-        if (validationStatus[1].name && (validationStatus[1].files || validationStatus[1].stages || validationStatus[1].algo) ) {
+        console.log("Status", validationStatus)
+        if (validationStatus[1].name && (validationStatus[1].files || validationStatus[1].algo || validationStatus[1].service) ) {
             this.setState(prevState => ({
                 validationStatus: {
                     ...prevState.validationStatus,
@@ -269,6 +291,64 @@ class Publish extends Component<{}, PublishState> {
         }
     }
 
+    private createAsset = async (event: FormEvent<HTMLFormElement>)  => {
+
+        event.preventDefault()
+        let asset = {}
+        let main = Object.assign(AssetModelService.main, {
+            type: this.state.type,
+            name: this.state.name,
+            dateCreated:
+                new Date(this.state.dateCreated)
+                    .toISOString()
+                    .split('.')[0] + 'Z', // remove milliseconds
+            author: this.state.author,
+            license: this.state.license,
+            price: allowPricing
+                ? Web3.utils.toWei(this.state.price, 'ether')
+                : this.state.price,
+        })
+        const additionalInformation = Object.assign(
+            AssetModel.additionalInformation,
+            {
+                description: this.state.description,
+                copyrightHolder: this.state.copyrightHolder,
+                categories: [this.state.categories]
+            }
+        )
+        switch(this.state.type) {
+            case "service": 
+                const service = JSON.parse(this.state.service)       
+                const endpoints = service.endpoints.split(',').map((url: string, index: number) => { return {
+                    "index" : index,
+                    "url" : url,
+                    "method" : "POST",
+                    "contentTypes": ["application/json"]
+                }})
+                main.service = {definition: { auth: JSON.parse(service.auth), endpoints: endpoints}}
+                break;
+            case "workflow":
+                const stages = this.state.stages.map( (stage: Stage, index: number) => { return {
+                    "index" : index,
+                    "stageType" : stage.stageType,
+                    "requirements" : stage.requirements,
+                    "input": stage.input.map((id: string, index: number) => { return {
+                        "index" : index,
+                        "id" : id,
+                    }}),
+                    "transformation": stage.transformation,
+                    "output": stage.output
+                }})
+
+                break;
+            case "algorithm":
+                break;
+            default: break;        
+        }
+        console.log(main)
+        return {main: main, additionalInformation: additionalInformation}
+    }
+
     private registerAsset = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault()
 
@@ -290,59 +370,34 @@ class Publish extends Component<{}, PublishState> {
             ({ found, ...keepAttrs }: { found: boolean }) => keepAttrs
         )
 
-        const newAsset = {
-            // OEP-08 Attributes
-            // https://github.com/oceanprotocol/OEPs/tree/master/8
-            main: Object.assign(AssetModel.main, {
-                type: this.state.type,
-                name: this.state.name,
-                dateCreated:
-                    new Date(this.state.dateCreated)
-                        .toISOString()
-                        .split('.')[0] + 'Z', // remove milliseconds
-                author: this.state.author,
-                license: this.state.license,
-                price: allowPricing
-                    ? Web3.utils.toWei(this.state.price, 'ether')
-                    : this.state.price,
-                files
-            }),
-            additionalInformation: Object.assign(
-                AssetModel.additionalInformation,
-                {
-                    description: this.state.description,
-                    copyrightHolder: this.state.copyrightHolder,
-                    categories: [this.state.categories]
-                }
-            )
-        }
+        // const newAsset = this.createAsset()
 
-        try {
-            const asset = await this.context.ocean.assets
-                .create(newAsset, account[0])
-                .next((publishingStep: number) =>
-                    this.setState({ publishingStep })
-                )
+        // try {
+        //     const asset = await this.context.ocean.assets
+        //         .create(newAsset, account[0])
+        //         .next((publishingStep: number) =>
+        //             this.setState({ publishingStep })
+        //         )
 
-            this.setState({
-                publishedDid: asset.id,
-                isPublished: true
-            })
+        //     this.setState({
+        //         publishedDid: asset.id,
+        //         isPublished: true
+        //     })
 
-            ReactGA.event({
-                category: 'Publish',
-                action: `registerAsset-end ${asset.id}`
-            })
-        } catch (error) {
-            // make readable errors
-            Logger.error('error:', error.message)
-            this.setState({ publishingError: error.message })
+        //     ReactGA.event({
+        //         category: 'Publish',
+        //         action: `registerAsset-end ${asset.id}`
+        //     })
+        // } catch (error) {
+        //     // make readable errors
+        //     Logger.error('error:', error.message)
+        //     this.setState({ publishingError: error.message })
 
-            ReactGA.event({
-                category: 'Publish',
-                action: `registerAsset-error ${error.message}`
-            })
-        }
+        //     ReactGA.event({
+        //         category: 'Publish',
+        //         action: `registerAsset-error ${error.message}`
+        //     })
+        // }
 
         this.setState({ isPublishing: false })
     }
@@ -361,7 +416,7 @@ class Publish extends Component<{}, PublishState> {
                                 currentStep={this.state.currentStep}
                             />
 
-                            <Form onSubmit={this.registerAsset}>
+                            <Form onSubmit={this.createAsset}>
                                 {steps.map((step: any, index: number) => (
                                     <Step
                                         key={index}
@@ -379,6 +434,7 @@ class Publish extends Component<{}, PublishState> {
                                         toStart={this.toStart}
                                         content={step.content}
                                         addAlgorithm={this.addAlgorithm}
+                                        addService={this.addService}
                                     />
                                 ))}
                             </Form>
