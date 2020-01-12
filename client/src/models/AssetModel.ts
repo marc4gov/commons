@@ -10,7 +10,10 @@ const AssetModel: MetaData = {
         author: '',
         license: '',
         price: '',
-        files: []
+        files: [],
+        workflow: {
+            stages: []
+        }
     },
     additionalInformation: {
         description: '',

@@ -1,5 +1,5 @@
 import React, { ChangeEvent, Component, FormEvent } from 'react'
-import { Logger, File, Workflow, StageRequirements, StageInput, StageTransformation, StageOutput } from '@oceanprotocol/squid'
+import { Logger, File, Workflow, Stage, StageRequirements, StageInput, StageTransformation, StageOutput } from '@oceanprotocol/squid'
 import Web3 from 'web3'
 import Route from '../../components/templates/Route'
 import Form from '../../components/atoms/Form/Form'
@@ -19,12 +19,12 @@ import withTracker from '../../hoc/withTracker'
 
 type AssetType = 'dataset' | 'algorithm' | 'container' | 'workflow' | 'service' | 'other'
 
-// hack! StageInput is an array and we get all strings for now...
-interface Stage {
+// hack to parse form input
+interface Stage1 {
     index: number;
     stageType?: string;
     requirements: string;
-    input: string[];
+    input: string;
     transformation: string;
     output: string;
 }
@@ -40,7 +40,7 @@ interface PublishState {
     type?: AssetType
     copyrightHolder?: string
     categories?: string
-    stages?: Stage[]
+    stages?: Stage1[]
     algo?: string
     service?: string
     currentStep?: number
@@ -213,7 +213,6 @@ class Publish extends Component<{}, PublishState> {
         //
         // Step 1
         //
-        console.log("Status", validationStatus)
         if (validationStatus[1].name && (validationStatus[1].files || validationStatus[1].algo || validationStatus[1].service) ) {
             this.setState(prevState => ({
                 validationStatus: {
@@ -337,20 +336,37 @@ class Publish extends Component<{}, PublishState> {
                 }
                 break;
             case "workflow":
-                const stages = this.state.stages.map( (stage: Stage, index: number) => { return {
-                    "index" : index,
-                    "stageType" : stage.stageType,
-                    "requirements" : stage.requirements,
-                    "input": stage.input.map((id: string, index: number) => { return {
+                let arr: Stage[]
+                arr = this.state.stages.map( (stage: Stage1, index: number) => { return {
                         "index" : index,
-                        "id" : id,
-                    }}),
-                    "transformation": stage.transformation,
-                    "output": stage.output
-                }})
-                
+                        "stageType" : stage.stageType,
+                        "requirements" : {
+                            "container": {
+                                "image": stage.requirements,
+                                "tag": "latest",
+                                "checksum": "sha256:cb57ecfa6ebbefd8ffc7f75c0f00e57a7fa739578a429b6f72a0df19315deadc"
+                        },
+                        "input": {
+                            "index" : 0,
+                            "id" : stage.input,
+                        },
+                        "transformation": {
+                            "id": stage.transformation
+                        },
+                        "output": {  
+                            "metadataUrl": "https://aquarius.net:5000/api/v1/aquarius/assets/ddo/",
+                            "secretStoreUrl": "http://secretstore.org:12001",
+                            "accessProxyUrl": "https://brizo.net:8030/api/v1/brizo/",
+                            "metadata":  stage.output
+                          }   
+                }}})
+                main.workflow = {
+                    stages: arr
+                }
                 break;
             case "algorithm":
+                const algorithm = JSON.parse(this.state.algo)
+
                 break;
             default: break;        
         }
