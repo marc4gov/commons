@@ -291,11 +291,15 @@ class Publish extends Component<{}, PublishState> {
         }
     }
 
-    private createAsset = async (event: FormEvent<HTMLFormElement>)  => {
+    private createAsset =  ()  => {
+        // remove `found` attribute from all File objects
+        // in a new array
+        const files = this.state.files.map(
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            ({ found, ...keepAttrs }: { found: boolean }) => keepAttrs
+        )
 
-        event.preventDefault()
-        let asset = {}
-        let main = Object.assign(AssetModelService.main, {
+        let main = Object.assign(AssetModel.main, {
             type: this.state.type,
             name: this.state.name,
             dateCreated:
@@ -307,6 +311,7 @@ class Publish extends Component<{}, PublishState> {
             price: allowPricing
                 ? Web3.utils.toWei(this.state.price, 'ether')
                 : this.state.price,
+            files
         })
         const additionalInformation = Object.assign(
             AssetModel.additionalInformation,
@@ -325,7 +330,11 @@ class Publish extends Component<{}, PublishState> {
                     "method" : "POST",
                     "contentTypes": ["application/json"]
                 }})
-                main.service = {definition: { auth: JSON.parse(service.auth), endpoints: endpoints}}
+                main.service = {
+                    spec: service.spec,
+                    specChecksum: service.specChecksum,
+                    definition: { auth: JSON.parse(service.auth), endpoints: endpoints}
+                }
                 break;
             case "workflow":
                 const stages = this.state.stages.map( (stage: Stage, index: number) => { return {
@@ -339,13 +348,12 @@ class Publish extends Component<{}, PublishState> {
                     "transformation": stage.transformation,
                     "output": stage.output
                 }})
-
+                
                 break;
             case "algorithm":
                 break;
             default: break;        
         }
-        console.log(main)
         return {main: main, additionalInformation: additionalInformation}
     }
 
@@ -363,41 +371,35 @@ class Publish extends Component<{}, PublishState> {
         const { ocean } = this.context
         const account = await ocean.accounts.list()
 
-        // remove `found` attribute from all File objects
-        // in a new array
-        const files = this.state.files.map(
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            ({ found, ...keepAttrs }: { found: boolean }) => keepAttrs
-        )
+        const newAsset = this.createAsset()
+        console.log("New Asset: ", newAsset)
 
-        // const newAsset = this.createAsset()
+        try {
+            const asset = await this.context.ocean.assets
+                .create(newAsset, account[0])
+                .next((publishingStep: number) =>
+                    this.setState({ publishingStep })
+                )
 
-        // try {
-        //     const asset = await this.context.ocean.assets
-        //         .create(newAsset, account[0])
-        //         .next((publishingStep: number) =>
-        //             this.setState({ publishingStep })
-        //         )
+            this.setState({
+                publishedDid: asset.id,
+                isPublished: true
+            })
 
-        //     this.setState({
-        //         publishedDid: asset.id,
-        //         isPublished: true
-        //     })
+            ReactGA.event({
+                category: 'Publish',
+                action: `registerAsset-end ${asset.id}`
+            })
+        } catch (error) {
+            // make readable errors
+            Logger.error('error:', error.message)
+            this.setState({ publishingError: error.message })
 
-        //     ReactGA.event({
-        //         category: 'Publish',
-        //         action: `registerAsset-end ${asset.id}`
-        //     })
-        // } catch (error) {
-        //     // make readable errors
-        //     Logger.error('error:', error.message)
-        //     this.setState({ publishingError: error.message })
-
-        //     ReactGA.event({
-        //         category: 'Publish',
-        //         action: `registerAsset-error ${error.message}`
-        //     })
-        // }
+            ReactGA.event({
+                category: 'Publish',
+                action: `registerAsset-error ${error.message}`
+            })
+        }
 
         this.setState({ isPublishing: false })
     }
@@ -416,7 +418,7 @@ class Publish extends Component<{}, PublishState> {
                                 currentStep={this.state.currentStep}
                             />
 
-                            <Form onSubmit={this.createAsset}>
+                            <Form onSubmit={this.registerAsset}>
                                 {steps.map((step: any, index: number) => (
                                     <Step
                                         key={index}

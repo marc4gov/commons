@@ -121,10 +121,10 @@ export default class Step extends PureComponent<StepProps, {}> {
                 {fields &&
                     Object.entries(fields).map(([key, value]) => {
                         if (key === 'selection') {
+                            const key1 = "files"
+                            const filefields = value[key1]
                             switch(state.type) {
                                 case "dataset":
-                                    const key1 = "files"
-                                    const filefields = value[key1]
                                     return (
                                         <Row key={key1}>
                                             <Label htmlFor={key1} required>
@@ -143,10 +143,18 @@ export default class Step extends PureComponent<StepProps, {}> {
                                     const key2 = "stages"
                                     const stagefields = value[key2]
                                     return (
+
                                         <Row key={key2}>
                                             <Label htmlFor={key2} required>
                                                 {stagefields.label}
                                             </Label>
+                                            <Files
+                                                placeholder={filefields.placeholder}
+                                                name={key1}
+                                                help={filefields.help}
+                                                files={state.files}
+                                                onChange={inputChange}
+                                            />
                                             <Stages
                                                 placeholder={stagefields.placeholder}
                                                 placeholders={['e.g tensorflow/tensorflow, kong, mysql', 'e.g. did:op:x02d, 123', 'e.g. did:op:x02d', 'e.g. reference to metadata output']}
@@ -165,6 +173,13 @@ export default class Step extends PureComponent<StepProps, {}> {
                                             <Label htmlFor={key3} required>
                                                 {algofields.label}
                                             </Label>
+                                            <Files
+                                                placeholder={filefields.placeholder}
+                                                name={key1}
+                                                help={filefields.help}
+                                                files={state.files}
+                                                onChange={inputChange}
+                                            />
                                             <Algorithm
                                                 placeholder={algofields.placeholder}
                                                 placeholders={['a', 'b', 'c', 'd']}
@@ -183,6 +198,13 @@ export default class Step extends PureComponent<StepProps, {}> {
                                             <Label htmlFor={key4} required>
                                                 {servicefields.label}
                                             </Label>
+                                            <Files
+                                                placeholder={filefields.placeholder}
+                                                name={key1}
+                                                help={filefields.help}
+                                                files={state.files}
+                                                onChange={inputChange}
+                                            />
                                             <Service
                                                 placeholder={servicefields.placeholder}
                                                 placeholders={['a', 'b', 'c', 'd']}
