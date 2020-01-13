@@ -1,11 +1,9 @@
 import React, { ChangeEvent, Component, FormEvent } from 'react'
-import { Logger, File, Workflow, Stage, StageRequirements, StageInput, StageTransformation, StageOutput } from '@oceanprotocol/squid'
+import { Logger, File, Stage } from '@oceanprotocol/squid'
 import Web3 from 'web3'
 import Route from '../../components/templates/Route'
 import Form from '../../components/atoms/Form/Form'
 import AssetModel from '../../models/AssetModel'
-import AssetModelWorkflow from '../../models/AssetModelWorkflow'
-import AssetModelService from '../../models/AssetModelService'
 
 
 import { User, Market } from '../../context'
@@ -18,16 +16,6 @@ import Content from '../../components/atoms/Content'
 import withTracker from '../../hoc/withTracker'
 
 type AssetType = 'dataset' | 'algorithm' | 'container' | 'workflow' | 'service' | 'other'
-
-// hack to parse form input
-interface Stage1 {
-    index: number;
-    stageType?: string;
-    requirements: string;
-    input: string;
-    transformation: string;
-    output: string;
-}
 
 interface PublishState {
     name?: string
@@ -342,7 +330,7 @@ class Publish extends Component<{}, PublishState> {
                 break;
             case "algorithm":
                 const algorithm = JSON.parse(this.state.algo)
-
+                // todo
                 break;
             default: break;        
         }
