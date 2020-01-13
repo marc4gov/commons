@@ -40,7 +40,7 @@ interface PublishState {
     type?: AssetType
     copyrightHolder?: string
     categories?: string
-    stages?: Stage1[]
+    stages?: Stage[]
     algo?: string
     service?: string
     currentStep?: number
@@ -336,32 +336,8 @@ class Publish extends Component<{}, PublishState> {
                 }
                 break;
             case "workflow":
-                let arr: Stage[]
-                arr = this.state.stages.map( (stage: Stage1, index: number) => { return {
-                        "index" : index,
-                        "stageType" : stage.stageType,
-                        "requirements" : {
-                            "container": {
-                                "image": stage.requirements,
-                                "tag": "latest",
-                                "checksum": "sha256:cb57ecfa6ebbefd8ffc7f75c0f00e57a7fa739578a429b6f72a0df19315deadc"
-                        },
-                        "input": {
-                            "index" : 0,
-                            "id" : stage.input,
-                        },
-                        "transformation": {
-                            "id": stage.transformation
-                        },
-                        "output": {  
-                            "metadataUrl": "https://aquarius.net:5000/api/v1/aquarius/assets/ddo/",
-                            "secretStoreUrl": "http://secretstore.org:12001",
-                            "accessProxyUrl": "https://brizo.net:8030/api/v1/brizo/",
-                            "metadata":  stage.output
-                          }   
-                }}})
                 main.workflow = {
-                    stages: arr
+                    stages: this.state.stages
                 }
                 break;
             case "algorithm":

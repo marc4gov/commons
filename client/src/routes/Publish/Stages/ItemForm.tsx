@@ -11,10 +11,10 @@ interface ItemFormProps {
 
 interface ItemFormStates {
     stageType: string
-    inputs: string
+    input: string
     requirements: string
     transformation: string
-    outputs: string
+    output: string
     hasError: boolean
 }
 
@@ -24,25 +24,25 @@ export default class ItemForm extends PureComponent<
 > {
     public state: ItemFormStates = {
         stageType: '',
-        inputs: '',
+        input: '',
         requirements: '',
         transformation: '',
-        outputs: '',
+        output: '',
         hasError: false,
     }
 
     private handleSubmit = (e: Event) => {
         e.preventDefault()
 
-        const { stageType, inputs, requirements, transformation, outputs } = this.state
+        const { stageType, input, requirements, transformation, output } = this.state
 
         // return when required fields are empty, and url value is no url
         // Can't use browser validation cause we are in a form within a form
-        if (!stageType || !inputs || !requirements || !transformation || !outputs) {
+        if (!stageType || !input || !requirements || !transformation || !output) {
             this.setState({ hasError: true })
             return
         }
-        const stage = {stageType: stageType, inputs: inputs, requirements: requirements, transformation: transformation, outputs: outputs}
+        const stage = {stageType: stageType, input: input, requirements: requirements, transformation: transformation, output: output}
         this.props.addStage(JSON.stringify(stage))
     }
     private onChangStageType = (e: React.FormEvent<HTMLInputElement>) => {
@@ -50,13 +50,13 @@ export default class ItemForm extends PureComponent<
         this.clearErrors()
     }
 
-    private onChangeInputs = (e: React.FormEvent<HTMLInputElement>) => {
-        this.setState({ inputs: e.currentTarget.value })
+    private onChangeInput = (e: React.FormEvent<HTMLInputElement>) => {
+        this.setState({ input: e.currentTarget.value })
         this.clearErrors()
     }
 
-    private onChangeOutputs = (e: React.FormEvent<HTMLInputElement>) => {
-        this.setState({ outputs: e.currentTarget.value })
+    private onChangeOutput = (e: React.FormEvent<HTMLInputElement>) => {
+        this.setState({ output: e.currentTarget.value })
         this.clearErrors()
     }
 
@@ -74,7 +74,7 @@ export default class ItemForm extends PureComponent<
     }
 
     public render() {
-        const { stageType, inputs, requirements, transformation, outputs, hasError } = this.state
+        const { stageType, input, requirements, transformation, output, hasError } = this.state
 
         return (
             <div className={styles.itemForm}>
@@ -99,13 +99,13 @@ export default class ItemForm extends PureComponent<
                     help="Supported requirements are Container images, comma separated"
                 />
                 <Input
-                    label="Inputs"
-                    name="inputs"
+                    label="Input"
+                    name="input"
                     required
-                    type="inputs"
+                    type="input"
                     placeholder={this.props.placeholders[1]}
-                    value={inputs}
-                    onChange={this.onChangeInputs}
+                    value={input}
+                    onChange={this.onChangeInput}
                     help="Supported inputs are DIDs and numbers, comma separated"
                 />
                 <Input
@@ -119,13 +119,13 @@ export default class ItemForm extends PureComponent<
                     help="Supported transformation: DID of transformation service"
                 />               
                 <Input
-                    label="Outputs"
-                    name="outputs"
+                    label="Output"
+                    name="output"
                     required
-                    type="outputs"
+                    type="output"
                     placeholder={this.props.placeholders[3]}
-                    value={outputs}
-                    onChange={this.onChangeOutputs}
+                    value={output}
+                    onChange={this.onChangeOutput}
                     help="Supported outputs in order: metadataUrl, secretStoreUrl, accessProxyUrl, metadata"
                 />
 

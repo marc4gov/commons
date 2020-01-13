@@ -49,9 +49,39 @@ export default class Stages extends PureComponent<StagesProps, StagesStates> {
             isFormShown: !this.state.isFormShown
         })
     }
-    private addStage = async (stage: string) => {
 
-        this.props.stages.push(JSON.parse(stage))
+    private async getStage(stge: string) {
+        const parsedStage = JSON.parse(stge)
+        const stage: Stage = {
+            "index" : 0,
+            "stageType" : parsedStage.stageType,
+            "requirements" : {
+                "container": {
+                    "image": parsedStage.requirements,
+                    "tag": "latest",
+                    "checksum": "sha256:cb57ecfa6ebbefd8ffc7f75c0f00e57a7fa739578a429b6f72a0df19315deadc"
+                }
+            },
+            "input": parsedStage.input.split(',').map((inp : string, index:number) => { return{
+                "index" : index,
+                "id" : inp,
+            }}),
+            "transformation": parsedStage.transformation,
+            "output": {  
+                "metadataUrl": "https://aquarius.net:5000/api/v1/aquarius/assets/ddo/",
+                "secretStoreUrl": "http://secretstore.org:12001",
+                "accessProxyUrl": "https://brizo.net:8030/api/v1/brizo/",
+                "metadata":  parsedStage.output
+              }   
+        }
+        return stage
+    }
+
+    private addStage = async (stge: string) => {
+
+        let stage: Stage | undefined = await this.getStage(stge)
+        stage.index = this.props.stages.length
+        this.props.stages.push(stage)
 
         const event = {
             currentTarget: {
